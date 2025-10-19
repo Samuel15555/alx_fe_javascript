@@ -1,110 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Quote Generator</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 0;
-    }
-
-    h1 {
-      text-align: center;
-      background-color: #333;
-      color: white;
-      padding: 20px 0;
-      margin-bottom: 20px;
-    }
-
-    .controls {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
-
-    #quoteDisplay {
-      width: 80%;
-      margin: 0 auto;
-      background-color: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
-    }
-
-    .quote-item {
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-    }
-
-    .quote-item:last-child {
-      border-bottom: none;
-    }
-
-    #notificationArea {
-      width: 80%;
-      margin: 10px auto;
-      padding: 10px;
-      text-align: center;
-      background-color: #fff3cd;
-      color: #856404;
-      border: 1px solid #ffeeba;
-      border-radius: 6px;
-      display: none; /* Hidden until needed */
-    }
-
-    .notification {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background-color: #4caf50;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 5px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      animation: fadeInOut 3s ease forwards;
-      z-index: 1000;
-    }
-
-    @keyframes fadeInOut {
-      0% { opacity: 0; transform: translateY(-10px); }
-      10% { opacity: 1; transform: translateY(0); }
-      90% { opacity: 1; }
-      100% { opacity: 0; transform: translateY(-10px); }
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dynamic Quote Generator with Sync</title>
 </head>
 <body>
-
   <h1>Dynamic Quote Generator</h1>
 
-  <div class="controls">
-    <button onclick="exportToJsonFile()">Export Quotes</button>
-    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
-
+  <div>
     <select id="categoryFilter" onchange="filterQuotes()">
       <option value="all">All Categories</option>
     </select>
-
-    <button onclick="syncQuotes()">Sync Quotes</button>
-    <p id="syncStatus">Status: Not Synced</p>
   </div>
-
-  <!-- Persistent notification area -->
-  <div id="notificationArea"></div>
 
   <div id="quoteDisplay"></div>
 
-  <div class="add-quote-form" style="text-align:center; margin-top:20px;">
-    <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
-    <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
-    <button onclick="addQuote()">Add Quote</button>
-  </div>
+  <h2>Add a New Quote</h2>
+  <input type="text" id="quoteText" placeholder="Enter quote" />
+  <input type="text" id="quoteCategory" placeholder="Enter category" />
+  <button onclick="addQuote()">Add Quote</button>
 
   <script src="script.js"></script>
 </body>
