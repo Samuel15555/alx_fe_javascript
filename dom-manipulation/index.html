@@ -42,6 +42,12 @@
     <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
   </div>
 
+  <!-- Sync and Status Controls -->
+<div class="sync-controls">
+  <button id="syncButton" onclick="syncWithServer()">Sync Quotes with Server</button>
+  <p id="syncStatus">Status: Not Synced</p>
+</div>
+
   <script src="script.js"></script>
 </body>
 </html>
