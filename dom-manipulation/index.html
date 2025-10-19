@@ -1,56 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dynamic Quote Generator</title>
-  <style>
-    body { font-family: system-ui, Arial; max-width: 860px; margin: 32px auto; padding: 0 16px; color: #111; }
-    h1 { text-align: center; margin-bottom: 12px; }
-    #controls { display:flex; gap:12px; align-items:center; justify-content:center; margin-bottom:18px; flex-wrap:wrap; }
-    #quoteDisplay { border-radius:8px; padding:20px; background:#f6f7fb; min-height:70px; display:flex; align-items:center; justify-content:center; text-align:center; }
-    .meta { margin-top:10px; text-align:center; color:#555; }
-    label { font-weight:600; margin-right:6px; }
-    input, select, button, textarea { padding:8px 10px; border-radius:6px; border:1px solid #ddd; font-size:14px; }
-    .form-row { display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; justify-content:center; }
-    .quote-item { margin:6px 0; padding:8px; border-radius:6px; background:#fff; border:1px solid #eee; }
-    #quotesList { margin-top:18px; }
-    .small { font-size:13px; color:#666; }
-  </style>
 </head>
 <body>
   <h1>Dynamic Quote Generator</h1>
 
-   <!-- Controls -->
-  <div id="controls">
-    <select id="categorySelect">
-      <option value="all">All categories</option>
-    </select>
+  <!-- Quote display area -->
+  <div id="quoteDisplay"></div>
+  <button id="newQuote">Show New Quote</button>
 
-    <button id="newQuote">Show New Quote</button>
-    <button id="showAddFormBtn">Add quote</button>
-
-    <!-- Export / Import -->
-    <button id="exportBtn">Export JSON</button>
-    <input type="file" id="importFile" accept=".json" style="display:inline-block;" />
+  <!-- Add new quote -->
+  <div>
+    <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
+    <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
+    <button id="addQuoteBtn" onclick="addQuote()">Add Quote</button>
   </div>
 
-  <!-- area to show last viewed quote stored in session -->
-  <div id="lastViewed" class="small" style="margin-top:10px;"></div>
-
-  <!-- Quote display -->
-  <div id="quoteDisplay" aria-live="polite">
-    <div>
-      <div id="quoteText" style="font-size:18px; font-weight:600;">(press "Show New Quote")</div>
-      <div class="meta small" id="quoteCategory"></div>
-    </div>
+  <!-- Import / Export Section -->
+  <div style="margin-top: 20px;">
+    <button id="exportQuotes" onclick="exportToJsonFile()">Export Quotes</button>
+    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
   </div>
-
-  <!-- Add quote form placeholder -->
-  <div id="addFormContainer" style="margin-top:18px;"></div>
-
-  <!-- Optional: list of quotes for debugging / management -->
-  <section id="quotesList"></section>
 
   <script src="script.js"></script>
 </body>
