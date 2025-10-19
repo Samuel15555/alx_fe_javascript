@@ -16,7 +16,10 @@ window.onload = function() {
 
   populateCategories();
   displayQuotes();
-  document.getElementById("categoryFilter").value = lastSelectedCategory;
+
+  // Restore the last selected category
+  const categoryFilter = document.getElementById("categoryFilter");
+  categoryFilter.value = lastSelectedCategory;
 };
 
 // Save quotes to localStorage
@@ -62,14 +65,9 @@ function populateCategories() {
 }
 
 // Display quotes (filtered)
-function displayQuotes() {
+function displayQuotes(filteredQuotes = quotes) {
   const quoteList = document.getElementById("quoteList");
-  const filter = document.getElementById("categoryFilter").value;
-
   quoteList.innerHTML = "";
-
-  const filteredQuotes =
-    filter === "all" ? quotes : quotes.filter(q => q.category === filter);
 
   filteredQuotes.forEach(q => {
     const li = document.createElement("li");
@@ -78,12 +76,20 @@ function displayQuotes() {
   });
 }
 
-// Filter quotes based on category
-function filterQuotes() {
+// Filter quotes based on selected category (required name)
+function filterQuote() {
   const selectedCategory = document.getElementById("categoryFilter").value;
   lastSelectedCategory = selectedCategory;
+
+  // Save selected category to localStorage
   localStorage.setItem("lastCategory", selectedCategory);
-  displayQuotes();
+
+  const filteredQuotes =
+    selectedCategory === "all"
+      ? quotes
+      : quotes.filter(q => q.category === selectedCategory);
+
+  displayQuotes(filteredQuotes);
 }
 
 // Export quotes to JSON file
