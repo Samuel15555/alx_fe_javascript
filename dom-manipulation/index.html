@@ -21,7 +21,7 @@
 <body>
   <h1>Dynamic Quote Generator</h1>
 
-  <!-- Controls -->
+   <!-- Controls -->
   <div id="controls">
     <select id="categorySelect">
       <option value="all">All categories</option>
@@ -29,7 +29,14 @@
 
     <button id="newQuote">Show New Quote</button>
     <button id="showAddFormBtn">Add quote</button>
+
+    <!-- Export / Import -->
+    <button id="exportBtn">Export JSON</button>
+    <input type="file" id="importFile" accept=".json" style="display:inline-block;" />
   </div>
+
+  <!-- area to show last viewed quote stored in session -->
+  <div id="lastViewed" class="small" style="margin-top:10px;"></div>
 
   <!-- Quote display -->
   <div id="quoteDisplay" aria-live="polite">
