@@ -1,52 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dynamic Quote Generator with Categories</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Quote Generator</title>
   <style>
-    body { font-family: system-ui, Arial; max-width: 900px; margin: 28px auto; padding: 0 14px; }
-    h1 { text-align:center; }
-    .controls { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:14px; }
-    input, select, button { padding:8px 10px; border-radius:6px; border:1px solid #ddd; }
-    ul { margin-top:16px; padding-left:20px; }
-    li { margin-bottom:8px; }
-    .small { font-size:0.9rem; color:#555; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+      background-color: #333;
+      color: white;
+      padding: 20px 0;
+      margin-bottom: 20px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    #quoteDisplay {
+      width: 80%;
+      margin: 0 auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .quote-item {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .quote-item:last-child {
+      border-bottom: none;
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #4caf50;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      animation: fadeInOut 3s ease forwards;
+      z-index: 1000;
+    }
+
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateY(-10px); }
+      10% { opacity: 1; transform: translateY(0); }
+      90% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-10px); }
+    }
   </style>
 </head>
 <body>
+
   <h1>Dynamic Quote Generator</h1>
 
-  <!-- Add new quote -->
   <div class="controls">
-    <input type="text" id="quoteInput" placeholder="Enter a new quote" />
-    <input type="text" id="categoryInput" placeholder="Enter category" />
-    <button id="addBtn" onclick="addQuote()">Add Quote</button>
-  </div>
+    <button onclick="exportToJsonFile()">Export Quotes</button>
+    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
 
-  <!-- Filter by category -->
-  <div class="controls">
-    <label for="categoryFilter" class="small">Filter:</label>
-    <select id="categoryFilter" onchange="filterQuote()">
+    <select id="categoryFilter" onchange="filterQuotes()">
       <option value="all">All Categories</option>
     </select>
-    <button id="newQuoteBtn" onclick="showRandomQuote()">Show Random Quote</button>
+
+    <button onclick="syncQuotes()">Sync Quotes</button>
+    <p id="syncStatus">Status: Not Synced</p>
   </div>
 
-  <!-- Display quotes -->
-  <ul id="quoteList"></ul>
+  <div id="quoteDisplay"></div>
 
-  <!-- Export/Import -->
-  <div class="controls">
-    <button id="exportQuotes" onclick="exportToJsonFile()">Export Quotes (JSON)</button>
-    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
+  <div class="add-quote-form" style="text-align:center; margin-top:20px;">
+    <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
+    <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
+    <button onclick="addQuote()">Add Quote</button>
   </div>
-
-  <!-- Sync and Status Controls -->
-<div class="sync-controls">
-  <button id="syncButton" onclick="syncWithServer()">Sync Quotes with Server</button>
-  <p id="syncStatus">Status: Not Synced</p>
-</div>
 
   <script src="script.js"></script>
 </body>

@@ -5,17 +5,47 @@ let quotes = JSON.parse(localStorage.getItem("quotes")) || [
   { text: "Keep pushing forward.", category: "Inspiration" }
 ];
 
-// ======== DOM Elements ========
+// ===== DOM Elements =====
 const quoteDisplay = document.getElementById("quoteDisplay");
 const categoryFilter = document.getElementById("categoryFilter");
 const syncStatus = document.getElementById("syncStatus");
 
-// ======== Local Storage Handling ========
+// ===== Save Quotes to Local Storage =====
 function saveQuotes() {
   localStorage.setItem("quotes", JSON.stringify(quotes));
 }
 
-// ======== Category Handling ========
+// ===== Display Quotes =====
+function displayQuotes(quotesArray) {
+  quoteDisplay.innerHTML = "";
+  quotesArray.forEach(q => {
+    const div = document.createElement("div");
+    div.classList.add("quote-item");
+    div.textContent = `${q.text} (${q.category})`;
+    quoteDisplay.appendChild(div);
+  });
+}
+
+// ===== Add New Quote =====
+function addQuote() {
+  const textInput = document.getElementById("newQuoteText");
+  const categoryInput = document.getElementById("newQuoteCategory");
+  const newQuote = { text: textInput.value.trim(), category: categoryInput.value.trim() };
+
+  if (newQuote.text && newQuote.category) {
+    quotes.push(newQuote);
+    saveQuotes();
+    populateCategories();
+    filterQuotes();
+    textInput.value = "";
+    categoryInput.value = "";
+    alert("Quote added successfully!");
+  } else {
+    alert("Please fill in both fields!");
+  }
+}
+
+// ===== Populate Categories =====
 function populateCategories() {
   const categories = [...new Set(quotes.map(q => q.category))];
   categoryFilter.innerHTML = `<option value="all">All Categories</option>`;
@@ -35,6 +65,7 @@ function populateCategories() {
   }
 }
 
+// ===== Filter Quotes =====
 function filterQuotes() {
   const selectedCategory = categoryFilter.value;
   localStorage.setItem("selectedCategory", selectedCategory);
@@ -46,19 +77,7 @@ function filterQuotes() {
   }
 }
 
-// ======== Display Quotes ========
-function displayQuotes(quotesArray) {
-  if (!quoteDisplay) return;
-  quoteDisplay.innerHTML = "";
-  quotesArray.forEach(q => {
-    const div = document.createElement("div");
-    div.classList.add("quote-item");
-    div.textContent = `${q.text} (${q.category})`;
-    quoteDisplay.appendChild(div);
-  });
-}
-
-// ======== Import & Export ========
+// ===== Export Quotes to JSON =====
 function exportToJsonFile() {
   const blob = new Blob([JSON.stringify(quotes, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
@@ -69,6 +88,7 @@ function exportToJsonFile() {
   URL.revokeObjectURL(url);
 }
 
+// ===== Import Quotes from JSON =====
 function importFromJsonFile(event) {
   const fileReader = new FileReader();
   fileReader.onload = function (e) {
@@ -82,35 +102,37 @@ function importFromJsonFile(event) {
   fileReader.readAsText(event.target.files[0]);
 }
 
-// ======== Server Sync Simulation ========
-async function syncWithServer() {
-  syncStatus.textContent = "Status: Syncing...";
+// ===== Fetch Quotes from Server =====
+async function fetchQuotesFromServer() {
   try {
-    // Simulate fetching from mock API
     const response = await fetch("https://jsonplaceholder.typicode.com/posts?_limit=3");
     const serverData = await response.json();
-
-    // Convert mock data to quote format
     const serverQuotes = serverData.map(post => ({
       text: post.title,
       category: "Server"
     }));
-
-    // Conflict resolution: Server takes precedence
-    const combinedQuotes = mergeQuotes(quotes, serverQuotes);
-    quotes = combinedQuotes;
-    saveQuotes();
-    populateCategories();
-    filterQuotes();
-
-    syncStatus.textContent = "Status: Synced successfully (Server data applied)";
+    return serverQuotes;
   } catch (error) {
-    syncStatus.textContent = "Status: Sync failed. Please try again.";
-    console.error("Sync error:", error);
+    console.error("Error fetching from server:", error);
+    return [];
   }
 }
 
-// ======== Merge Quotes (Conflict Resolution) ========
+// ===== Post Quotes to Server =====
+async function postQuotesToServer(newQuotes) {
+  try {
+    await fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newQuotes)
+    });
+    console.log("Quotes posted successfully!");
+  } catch (error) {
+    console.error("Error posting to server:", error);
+  }
+}
+
+// ===== Merge Quotes (Conflict Resolution) =====
 function mergeQuotes(localQuotes, serverQuotes) {
   const textSet = new Set(serverQuotes.map(q => q.text));
   const merged = [...serverQuotes];
@@ -120,7 +142,40 @@ function mergeQuotes(localQuotes, serverQuotes) {
   return merged;
 }
 
-// ======== Initialization ========
+// ===== Sync Quotes (Main Sync Function) =====
+async function syncQuotes() {
+  syncStatus.textContent = "Status: Syncing with server...";
+  const serverQuotes = await fetchQuotesFromServer();
+
+  if (serverQuotes.length > 0) {
+    const merged = mergeQuotes(quotes, serverQuotes);
+    quotes = merged;
+    saveQuotes();
+    populateCategories();
+    filterQuotes();
+
+    await postQuotesToServer(quotes);
+    syncStatus.textContent = "Status: Synced successfully with server!";
+    showNotification("Quotes synced successfully!");
+  } else {
+    syncStatus.textContent = "Status: Sync failed (no server data).";
+    showNotification("Failed to fetch server data.");
+  }
+}
+
+// ===== Periodic Sync Every 60 Seconds =====
+setInterval(syncQuotes, 60000);
+
+// ===== UI Notification =====
+function showNotification(message) {
+  const notif = document.createElement("div");
+  notif.textContent = message;
+  notif.className = "notification";
+  document.body.appendChild(notif);
+  setTimeout(() => notif.remove(), 3000);
+}
+
+// ===== Initialization =====
 document.addEventListener("DOMContentLoaded", () => {
   populateCategories();
   filterQuotes();
